@@ -62,6 +62,11 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /Y $(TargetDir)BoxedIce.ServerDensity.Agent.MongoDB.dll $(SolutionDir)BoxedIce.ServerDensity.Agent\bin\Debug\mongodb\
+xcopy /Y $(TargetDir)MongoDB.Bson.dll $(SolutionDir)BoxedIce.ServerDensity.Agent\bin\Debug\mongodb\
+xcopy /Y $(TargetDir)MongoDB.Driver.dll $(SolutionDir)BoxedIce.ServerDensity.Agent\bin\Debug\mongodb\</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
