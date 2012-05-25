@@ -46,49 +46,39 @@ namespace BoxedIce.ServerDensity.Agent
             _results.Add("agentVersion", _version);
         }
 
+        private void LogDict(IDictionary<string, object> toLog)
+        {
+            foreach (var key in toLog.Keys)
+            {
+                Log.InfoFormat("Processing: {0}", key);
+                if (toLog[key] is IDictionary<string, object>)
+                {
+                    LogDict(toLog[key] as IDictionary<string, object>);
+                }
+                else
+                {
+                    Log.InfoFormat("Value: {0}", toLog[key].ToString());
+                    JsonConvert.SerializeObject(toLog[key]);
+                }
+            }
+        }
+
         /// <summary>
         /// Creates and sends the HTTP POST.
         /// </summary>
         public void Post()
         {
-            String payload = String.Empty;
-            try
-            {
-                payload = JsonConvert.SerializeObject(_results);
-            }
-            catch
-            {
-                // if we get here, we've got a problem with the serialization
-                var mongoDict = (_results["mongoDB"] as IDictionary<string, object>);
+            
+            
 
-                // iterate the keys and attempt to convert each key
-                foreach (var result in mongoDict.Keys)
-                {
-                    Log.InfoFormat("Attempting conversion of {0}", result);
-                    try
-                    {
-                        // attempt the conversion
-                        var conversion = JsonConvert.SerializeObject(mongoDict[result]);
-                    }
-                    catch
-                    {
-                        // if we get here, we've found the key that has the problem above
-                        // it's probably a dictionary
-                        // attempt a conversion of each key of that
-                        IDictionary<string, object> inner = mongoDict[result] as IDictionary<string, object>;
-                        foreach (var possible in inner.Keys)
-                        {
-                            // this will fail when it hits the value that can't be converted
-                            
-                            Log.InfoFormat("Processing possible failure key: {0}", possible);
-                            Log.InfoFormat("Processing value: {0}", inner[possible].ToString());
-                            var conversion = JsonConvert.SerializeObject(inner[possible]);
-                            Log.InfoFormat("Processed: {0}", conversion);
-                        }
+            // if we get here, we've got a problem with the serialization
+            var mongoDict = (_results["mongoDB"] as IDictionary<string, object>);
 
-                    }
-                }
-            }
+            LogDict(mongoDict);
+          
+            String payload = JsonConvert.SerializeObject(_results);
+
+            
             var hash = MD5Hash(payload);
 
             // TODO: this is for quick testing; we'll need to add proxy 
