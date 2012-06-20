@@ -68,13 +68,15 @@ namespace BoxedIce.ServerDensity.Agent
         /// </summary>
         public void Post()
         {
-            
-            
 
-            // if we get here, we've got a problem with the serialization
-            var mongoDict = (_results["mongoDB"] as IDictionary<string, object>);
 
-            LogDict(mongoDict);
+            if (_results.Keys.Contains("mongoDb"))
+            {
+                // if we get here, we've got a problem with the serialization
+                var mongoDict = (_results["mongoDB"] as IDictionary<string, object>);
+
+                LogDict(mongoDict);
+            }
           
             String payload = JsonConvert.SerializeObject(_results);
 
